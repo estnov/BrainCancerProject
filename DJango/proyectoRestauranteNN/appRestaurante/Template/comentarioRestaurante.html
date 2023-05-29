@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ingreso de la imagen</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            background-color: #2c3e50;
+        }
+        form {
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+		input[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+
+</head>
+<body>
+    <form action="/predecir/" method="post">
+        {% csrf_token %}
+        <p>Ingrese la imagen:
+            <input type="file" accept="image/*" onchange="loadFile(event)">
+            <p><img id="output" width="256" /></p>
+            <br>
+            <input style="display: none;" name="localpath" id="localpath">
+            <script>
+                var loadFile = function(event) {
+                    var image = document.getElementById('output');
+                    var path = document.getElementById('localpath');
+                    let url = URL.createObjectURL(event.target.files[0]);
+                    path.value = url;
+                    image.src=url;
+                };
+            </script>
+        </p>
+        <p style="display: none;">Ingrese la imagen:
+            <input type="file" accept="image/*" onchange="loadFile(event)">
+            <p style="display: none;"><canvas id="canvas" width="256" height="256"></canvas></p>
+            <br>
+            <input style="display: none;" name="localpath2" id="localpath">
+            <script>
+                var loadFile = function(event) {
+                    var canvas = document.getElementById('canvas');
+                    var context = canvas.getContext('2d');
+                    var image = document.getElementById('output');
+                    var path = document.getElementById('localpath');
+                    let url = URL.createObjectURL(event.target.files[0]);
+                    path.value = url;
+                    image.src = url;
+        
+                    image.onload = function() {
+                        console.log(image.width, image.height)
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        context.drawImage(image, 0, 0);
+        
+                        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        var pixelData = imageData.data;
+        
+                        var pixelArray = new Array(256 * 256);
+        
+                        // Convert pixelData to pixelArray
+                        for (var i = 0; i < pixelData.length; i += 4) {
+                            var r = pixelData[i];
+                            var g = pixelData[i + 1];
+                            var b = pixelData[i + 2];
+                            var a = pixelData[i + 3];
+                            var gray = (r + g + b) / 3; // Convert to grayscale
+                            var index = i / 4;
+                            pixelArray[index] = gray;
+                        }
+        
+                        path.value = pixelArray;
+                        console.log(pixelArray);
+                    };
+                };
+            </script>
+        </p>
+        <p><input type="submit" value="PREDECIR"></p>
+    </form>
+</body>
+
+</html>

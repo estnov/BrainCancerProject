@@ -1,0 +1,160 @@
+<html><body>
+<h1>Preprocesamiento de las imagenes</h1>
+<h2>Esteban Novillo Quinde</h2>
+<h2>Juan Pablo Saldana Torres</h2>
+<h3>Tema: Imagenes de cancer cerebral. Deteccion de tumores mediante radiografias.</h3>
+<h4>El objetivo del presente programa es:<ul><li>Agrupar cada imagen en su correspondiente carpeta (positivos / negativos)</li><li>Conversion a escala de grises.</li><li>Aplicacion del filtro mediana para reduccion de ruido</li><li>Aplicacion de las siguientes operaciones morfologicas: Original + Top Hat - Black Hat con un tamano de kernel de 37x37</li><li>Deteccion de bordes y aplicacion de la operacion: sobel + original</li></ul></h4>
+<br><h5>Objetivo</h5>
+<p>El objetivo es generar el entrenamiento de una SVM con estas imagenes, para posteriormente implementar un servicio web en FLASK usando Django que reciba la imagen desde una aplicacion en Android que realice todo este preprocesamiento en vivo.</p>
+<br><h5>---- Inicio del codigo del programa ---- </h5><br>
+<br>
+<br>
+#include &lt;iostream&gt;<br>
+#include &lt;fstream&gt; // Librería para el manejo de archivos<br>
+#include &lt;string&gt;<br>
+#include &lt;vector&gt;<br>
+#include &lt;filesystem&gt; // Librería para el manejo de archivos y directorios<br>
+#include &lt;Magick++.h&gt; // Librería para el manejo de imágenes<br>
+<br>
+#include &lt;cmath&gt; // Librería que contiene funciones matemáticas (sin, cos, tan, PI, etc.)<br>
+#include &lt;random&gt; // Generación de números aleatorios<br>
+<br>
+#include &lt;opencv2/opencv.hpp&gt; // Librería de OpenCV para glob<br>
+<br>
+#include &lt;chrono&gt; // Librería para medir el tiempo de ejecución<br>
+<br>
+using namespace std;<br>
+using namespace Magick;<br>
+using namespace cv;<br>
+<br>
+int countImage = 0;<br>
+<br>
+void processImage(const std::string&amp; imagePath) {<br>
+    cv::Mat image = cv::imread(imagePath);<br>
+    Size kernelSize(37,  37);<br>
+<br>
+    if (!image.empty()) {<br>
+<br>
+        cout&lt;&lt;"Imagen leida: "&lt;&lt;imagePath&lt;&lt;endl;<br>
+<br>
+        cv::resize(image, image, cv::Size(256, 256));<br>
+<br>
+        Mat diffImages, enhancedImage, topHat, blackHat, sobel, thresholdedImage;<br>
+<br>
+        // Convertir la imagen a escala de grises<br>
+        cv::cvtColor(image, image, cv::COLOR_BGR2GRAY);<br>
+<br>
+        cv::morphologyEx(image, topHat, cv::MORPH_TOPHAT, cv::getStructuringElement(cv::MORPH_RECT, kernelSize));<br>
+<br>
+        // Black Hat<br>
+        cv::morphologyEx(image, blackHat, cv::MORPH_BLACKHAT, cv::getStructuringElement(cv::MORPH_RECT, kernelSize));<br>
+<br>
+        subtract(topHat, blackHat, diffImages);<br>
+        add(image, diffImages, enhancedImage);<br>
+<br>
+        // Detección de bordes<br>
+        cv::Sobel(enhancedImage, sobel, CV_8U, 1, 1);<br>
+<br>
+        // Aplicar la operación sobel + original<br>
+<br>
+        add(enhancedImage, sobel, enhancedImage);<br>
+<br>
+        // Guardar la imagen<br>
+        std::string imagenProcesada = "/media/esteban/Local Disk/Datasets/BrainTumor/Fase_1/ImagenesProcesadas/Negativos/";<br>
+        //std::string imagenProcesada = "/media/esteban/Local Disk/Datasets/BrainTumor/Fase_1/ImagenesProcesadas/Positivos/";<br>
+<br>
+        imagenProcesada += std::to_string(countImage) + ".jpg";<br>
+        countImage++;<br>
+        <br>
+        cv::imwrite(imagenProcesada, enhancedImage);<br>
+    }<br>
+}<br>
+<br>
+<br>
+<br>
+void readImagesRecursive(const std::string&amp; directoryPath) {<br>
+    for (const auto&amp; entry : std::filesystem::recursive_directory_iterator(directoryPath)) {<br>
+        if (!entry.is_directory()) {<br>
+            if (entry.path().extension() == ".jpg" || entry.path().extension() == ".png") {<br>
+                processImage(entry.path().string());<br>
+            }<br>
+        }<br>
+    }<br>
+}<br>
+<br>
+<br>
+<br>
+int main(int argc, char *argv[]){<br>
+    <br>
+    InitializeMagick(*argv); // Inicialización de la librería Magick++<br>
+<br>
+    ofstream htmlFile("Informe.html");<br>
+<br>
+<br>
+    htmlFile &lt;&lt; "&lt;html&gt;&lt;body&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;h1&gt;Preprocesamiento de las imagenes&lt;/h1&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;h2&gt;Esteban Novillo Quinde&lt;/h2&gt;\n";<br>
+    htmlFile &lt;&lt; "&lt;h2&gt;Juan Pablo Saldana Torres&lt;/h2&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;h3&gt;Tema: Imagenes de cancer cerebral. Deteccion de tumores mediante radiografias.&lt;/h3&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;h4&gt;El objetivo del presente programa es:&lt;ul&gt;&lt;li&gt;Agrupar cada imagen en su correspondiente carpeta (positivos / negativos)&lt;/li&gt;&lt;li&gt;Conversion a escala de grises.&lt;/li&gt;&lt;li&gt;Aplicacion del filtro mediana para reduccion de ruido&lt;/li&gt;&lt;li&gt;Aplicacion de las siguientes operaciones morfologicas: Original + Top Hat - Black Hat con un tamano de kernel de 37x37&lt;/li&gt;&lt;li&gt;Deteccion de bordes y aplicacion de la operacion: sobel + original&lt;/li&gt;&lt;/ul&gt;&lt;/h4&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;br&gt;&lt;h5&gt;Objetivo&lt;/h5&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;p&gt;El objetivo es generar el entrenamiento de una SVM con estas imagenes, para posteriormente implementar un servicio web en FLASK usando Django que reciba la imagen desde una aplicacion en Android que realice todo este preprocesamiento en vivo.&lt;/p&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;br&gt;&lt;h5&gt;---- Inicio del codigo del programa ---- &lt;/h5&gt;&lt;br&gt;\n";<br>
+    // Leer el código fuente del programa<br>
+<br>
+    std::ifstream in_file("Principal.cpp");<br>
+<br>
+    if (!in_file.is_open()) {<br>
+        std::cerr &lt;&lt; "Error" &lt;&lt; std::endl;<br>
+        return 1;<br>
+    }<br>
+<br>
+    std::string line;<br>
+    std::cout&lt;&lt;"Se escribe el programa en el html"&lt;&lt;endl;<br>
+    while (std::getline(in_file, line)) {<br>
+        cout&lt;&lt;"Leyendo linea: "&lt;&lt;line&lt;&lt;endl;<br>
+        for(int k = 0; k &lt; line.length(); k++){<br>
+            if(line[k] == '&amp;'){<br>
+                cout&lt;&lt;"Encontrado &amp;"&lt;&lt;endl;<br>
+                line.replace(k, 1, "&amp;amp;");<br>
+            }<br>
+            if(line[k] == '&lt;'){<br>
+                cout&lt;&lt;"Encontrado &lt;"&lt;&lt;endl;<br>
+                line.replace(k, 1, "&amp;lt;");<br>
+            }<br>
+            if(line[k] == '&gt;'){<br>
+                cout&lt;&lt;"Encontrado &gt;"&lt;&lt;endl;<br>
+                line.replace(k, 1, "&amp;gt;");<br>
+            }<br>
+        }<br>
+        std::cout&lt;&lt;"Leyendo linea: "&lt;&lt;line&lt;&lt;endl;<br>
+        htmlFile &lt;&lt; line &lt;&lt; "&lt;br&gt;\n";<br>
+    }<br>
+<br>
+    htmlFile &lt;&lt; "&lt;/code&gt;&lt;br&gt;&lt;h5&gt;---- Fin del codigo del programa ---- &lt;/h5&gt;&lt;br&gt;\n";<br>
+<br>
+    htmlFile &lt;&lt; "&lt;/body&gt;&lt;/html&gt;\n";<br>
+<br>
+    htmlFile.close();<br>
+<br>
+<br>
+    // Lectura de las imagenes<br>
+<br>
+    std::string directoryPath = "/media/esteban/Local Disk/Datasets/BrainTumor/Fase_1/Negativos";<br>
+    //std::string directoryPath = "/media/esteban/Local Disk/Datasets/BrainTumor/Fase_1/Positivos";<br>
+    readImagesRecursive(directoryPath);<br>
+    <br>
+<br>
+<br>
+    return 0;<br>
+}<br>
+<br>
+</code><br><h5>---- Fin del codigo del programa ---- </h5><br>
+</body></html>
