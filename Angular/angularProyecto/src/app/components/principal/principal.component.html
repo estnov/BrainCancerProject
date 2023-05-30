@@ -1,0 +1,47 @@
+<body>
+    <mat-card>
+        <mat-card-header style="justify-content: center;">
+            <mat-card-title>
+                <h4>Diagnóstico de cáncer cerebral</h4>
+            </mat-card-title>
+        </mat-card-header>
+    </mat-card>
+    <hr>
+    <mat-card>
+        <mat-card-header style="margin: 30px">
+            <mat-card-title>
+                <h4>Indicaciones al subir imágenes:</h4>
+            </mat-card-title>
+            <mat-list>
+                <mat-list-item>- La imágen debe ser de 256 x 256 píxeles</mat-list-item>
+                <mat-list-item>- Se debe seleccionar el archivo, confirmar que el nombre es correcto y posteriormente cargarlo</mat-list-item>
+                <mat-list-item>- Una vez subido el botón de generar diagnóstico se habilitará</mat-list-item>
+            </mat-list>
+        </mat-card-header>
+    </mat-card>
+    <hr>
+    <mat-card>
+        <mat-card-header style="justify-content: center;">
+            <mat-card-title>
+                <h4>Subir imagen</h4>
+            </mat-card-title>
+            <br>
+            <mat-card-content>
+                <div *ngIf="imageUrl">
+                    <img [src]="imageUrl" alt="Preview">
+                </div>
+
+                <div>
+                    <input mat-raised-button color="primary" type="file" (change)="onFileSelected($event)" accept="image/*">
+                </div>
+                <br>
+                <button mat-raised-button color="primary" (click)="uploadImage()" [disabled]="habilitarCarga">Cargar imagen</button>
+                <br>
+                <br>
+                <button mat-raised-button color="accent" (click)="procesarImagen()" [disabled]="habilitar">Procesar</button>
+            </mat-card-content>
+        </mat-card-header>
+    </mat-card>
+
+
+</body>
