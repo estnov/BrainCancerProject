@@ -1,47 +1,64 @@
-<body>
-    <mat-card>
-        <mat-card-header style="justify-content: center;">
-            <mat-card-title>
-                <h4>Diagnóstico de cáncer cerebral</h4>
-            </mat-card-title>
-        </mat-card-header>
-    </mat-card>
-    <hr>
-    <mat-card>
-        <mat-card-header style="margin: 30px">
-            <mat-card-title>
-                <h4>Indicaciones al subir imágenes:</h4>
-            </mat-card-title>
-            <mat-list>
-                <mat-list-item>- La imágen debe ser de 256 x 256 píxeles</mat-list-item>
-                <mat-list-item>- Se debe seleccionar el archivo, confirmar que el nombre es correcto y posteriormente cargarlo</mat-list-item>
-                <mat-list-item>- Una vez subido el botón de generar diagnóstico se habilitará</mat-list-item>
-            </mat-list>
-        </mat-card-header>
-    </mat-card>
-    <hr>
-    <mat-card>
-        <mat-card-header style="justify-content: center;">
-            <mat-card-title>
-                <h4>Subir imagen</h4>
-            </mat-card-title>
-            <br>
-            <mat-card-content>
-                <div *ngIf="imageUrl">
-                    <img [src]="imageUrl" alt="Preview">
-                </div>
-
+<body style="background-color: rgba(161, 204, 231, 0.671); ;">
+    <div id="profile_leftPanel" style="background-color:rgb(100, 183, 215); ;">
+        <div style="height: 30%;"></div>
+        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon" formaction="https://github.com/estnov/BrainCancerProject">
+            <mat-icon>bug_report</mat-icon> <a href="https://github.com/estnov/BrainCancerProject">GitHub project</a>
+          </button>
+      </div>
+      <!-- leftPanel end -->
+      <div id="profile_rightPanel">
+        <div id="profile_rightPanel_center">
+          
+        </div>
+        <!-- _center end -->
+        <mat-card>
+            <mat-card-header style="justify-content: center; ">
                 <div>
-                    <input mat-raised-button color="primary" type="file" (change)="onFileSelected($event)" accept="image/*">
+                    <img src="../../../assets/logo.png" alt="Logo" height="100">
                 </div>
+            </mat-card-header>
+        </mat-card>
+        <hr>
+        <mat-card>
+            <mat-card-header style="margin: 30px">
+                <mat-card-title>
+                    <h4>Indicaciones al subir imágenes:</h4>
+                </mat-card-title>
+                <mat-list>
+                    <mat-list-item>- La imágen debe ser de 256 x 256 píxeles</mat-list-item>
+                    <mat-list-item>- Se debe seleccionar el archivo, confirmar que el nombre es correcto y posteriormente cargarlo</mat-list-item>
+                    <mat-list-item>- Una vez subido el botón de generar diagnóstico se habilitará</mat-list-item>
+                </mat-list>
+            </mat-card-header>
+        </mat-card>
+        <hr>
+        <mat-card>
+            <mat-card-header style="justify-content: center;">
+                <mat-card-title>
+                    <h4>Subir imagen</h4>
+                </mat-card-title>
                 <br>
-                <button mat-raised-button color="primary" (click)="uploadImage()" [disabled]="habilitarCarga">Cargar imagen</button>
-                <br>
-                <br>
-                <button mat-raised-button color="accent" (click)="procesarImagen()" [disabled]="habilitar">Procesar</button>
-            </mat-card-content>
-        </mat-card-header>
-    </mat-card>
+                <mat-card-content>
+                    <div style="height: 256px;" *ngIf="!imageUrl">
+                        <canvas #canvas width="256" height="256" style="border:1px solid #000000;"></canvas>
+                    </div>
+                    <div *ngIf="imageUrl" >
+                        <img [src]="imageUrl" alt="Preview">
+                    </div>
+    
+                    <div>
+                        <input mat-raised-button color="primary" type="file" (change)="onFileSelected($event)" accept="image/*">
+                    </div>
+                    <br>
+                    <button mat-raised-button color="primary" (click)="uploadImage()" [disabled]="habilitarCarga">Cargar imagen</button>
+                    <br>
+                    <br>
+                    <button mat-raised-button color="accent" (click)="procesarImagen()" [disabled]="habilitar">Procesar</button>
+                </mat-card-content>
+            </mat-card-header>
+        </mat-card>
+      </div>
+      <!-- rightPanel end -->
 
 
 </body>

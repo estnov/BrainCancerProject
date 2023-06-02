@@ -54,8 +54,7 @@ export class PrincipalComponent {
     this.api.sendPixelArray(this.pixelArray).then((response: any) => {
       const dialogRef = this.dialog.open(ResultadoComponent, {
         data: {respuesta: response.result[0]},
-        width: '50%',
-        height: '50%'
+        height: '100px'
       });
       dialogRef.afterClosed().subscribe(result => {
         console.log('Cerrar dialogo');
