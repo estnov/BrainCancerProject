@@ -10,6 +10,7 @@ import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angula
 export class ResultadoComponent {
 
   respuesta: string = "";
+  imagen = localStorage.getItem('urlLocal');
 
   constructor(public dialogRef: MatDialogRef<ResultadoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {

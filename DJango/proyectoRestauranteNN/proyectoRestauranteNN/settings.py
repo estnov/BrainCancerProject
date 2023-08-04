@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-cxcsz3uqlu)!i7yet3m*r_+5rlegr0cupf5n%y5pq&@_^xfl_j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -91,7 +91,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-                'C:/Users/esteb/OneDrive - Universidad Politecnica Salesiana/7mo ciclo/Aprendizaje automatico/Practica 2/proyectoCompleto/BrainCancerProject/DJango/proyectoRestauranteNN/appRestaurante/Template'
+                './appRestaurante/Template'
             ],
         "APP_DIRS": True,
         "OPTIONS": {

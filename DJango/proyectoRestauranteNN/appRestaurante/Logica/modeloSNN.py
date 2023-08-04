@@ -12,7 +12,7 @@ class modeloSNN():
    
     def predict(self,df):
         
-        filename = "C:/Users/esteb/OneDrive - Universidad Politecnica Salesiana/7mo ciclo/Aprendizaje automatico/Practica 2/proyectoCompleto/BrainCancerProject/Python/svc.pickle"
+        filename = "svc.pickle"
         with open(filename, 'rb') as file:
             model = pickle.load(file)
         predictions = model.predict(df)

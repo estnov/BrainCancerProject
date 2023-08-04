@@ -28,6 +28,7 @@ export class PrincipalComponent {
     this.selectedFile = event.target.files[0];
     this.urlLocal = URL.createObjectURL(event.target.files[0]);
     console.log(this.urlLocal)
+    localStorage.setItem('urlLocal', this.urlLocal);
     this.habilitarCarga = false;
   }
 
@@ -54,7 +55,7 @@ export class PrincipalComponent {
     this.api.sendPixelArray(this.pixelArray).then((response: any) => {
       const dialogRef = this.dialog.open(ResultadoComponent, {
         data: {respuesta: response.result[0]},
-        height: '100px'
+        height: '50%'
       });
       dialogRef.afterClosed().subscribe(result => {
         console.log('Cerrar dialogo');
